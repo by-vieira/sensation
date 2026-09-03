@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Sensation React"
+  short_description: "Launch and retain the React workbench"
+  default_prompt: "Use $test-sensation-react to launch the React workbench and iteratively verify the affected behavior in a controlled browser."

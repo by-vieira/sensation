@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Sensation Svelte"
+  short_description: "Launch and retain the Svelte workbench"
+  default_prompt: "Use $test-sensation-svelte to launch the Svelte workbench and iteratively verify the affected behavior in a controlled browser."

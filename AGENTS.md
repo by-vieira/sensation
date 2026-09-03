@@ -153,6 +153,7 @@ For a non-trivial visual, layout, or copy change, create several distinct static
 
 The project is a pnpm workspace. Public packages use the `@morgan-vieira-npm` scope.
 
+- `.agents/skills` contains repository testing workflows.
 - `apps/react-demo` contains the private React component workbench.
 - `apps/svelte-demo` contains the private Svelte component workbench.
 - `packages/react` contains the React components.
