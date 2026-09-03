@@ -151,8 +151,13 @@ For a non-trivial visual, layout, or copy change, create several distinct static
 
 ## Where code lives
 
-The web implementation has not been scaffolded yet. Do not invent directories here before they exist. Once the structure lands, update this section in the same change.
+The project is a pnpm workspace. Public packages use the `@morgan-vieira-npm` scope.
 
+- `apps/react-demo` contains the private React component workbench.
+- `apps/svelte-demo` contains the private Svelte component workbench.
+- `packages/react` contains the React components.
+- `packages/svelte` contains the Svelte components.
+- `packages/theme` contains framework-independent theme rules and values.
 - `.repos/lib-studio-elttob/LibStudioElttob/RbxSensation` contains the read-only RbxSensation reference.
 - `.repos/lib-studio-elttob/LibStudioElttob/RbxVanilla` contains related icon behavior used by parts of the reference.
 

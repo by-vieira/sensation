@@ -1,0 +1,42 @@
+{
+	"name": "@morgan-vieira-npm/sensation-svelte",
+	"version": "0.0.0",
+	"files": [
+		"dist"
+	],
+	"type": "module",
+	"sideEffects": false,
+	"types": "./src/lib/index.ts",
+	"svelte": "./src/lib/index.ts",
+	"exports": {
+		".": {
+			"types": "./src/lib/index.ts",
+			"svelte": "./src/lib/index.ts",
+			"import": "./src/lib/index.ts"
+		}
+	},
+	"publishConfig": {
+		"types": "./dist/index.d.ts",
+		"svelte": "./dist/index.js",
+		"exports": {
+			".": {
+				"types": "./dist/index.d.ts",
+				"svelte": "./dist/index.js",
+				"import": "./dist/index.js"
+			}
+		}
+	},
+	"scripts": {
+		"build": "svelte-package",
+		"check": "tsc --project tsconfig.json"
+	},
+	"devDependencies": {
+		"@sveltejs/package": "catalog:",
+		"svelte": "catalog:",
+		"svelte-check": "catalog:",
+		"typescript": "catalog:"
+	},
+	"peerDependencies": {
+		"svelte": "^5.0.0"
+	}
+}

@@ -1,0 +1,32 @@
+{
+	"name": "@morgan-vieira-npm/sensation-theme",
+	"version": "0.0.0",
+	"files": [
+		"dist"
+	],
+	"type": "module",
+	"sideEffects": false,
+	"types": "./src/index.ts",
+	"exports": {
+		".": {
+			"types": "./src/index.ts",
+			"import": "./src/index.ts"
+		}
+	},
+	"publishConfig": {
+		"types": "./dist/index.d.ts",
+		"exports": {
+			".": {
+				"types": "./dist/index.d.ts",
+				"import": "./dist/index.js"
+			}
+		}
+	},
+	"scripts": {
+		"build": "tsc --project tsconfig.build.json",
+		"check": "tsc --project tsconfig.json"
+	},
+	"devDependencies": {
+		"typescript": "catalog:"
+	}
+}

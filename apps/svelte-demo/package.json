@@ -1,0 +1,21 @@
+{
+	"name": "@morgan-vieira-npm/sensation-svelte-demo",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "svelte-check --tsconfig ./tsconfig.json && vite build",
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"dev": "vite"
+	},
+	"dependencies": {
+		"@morgan-vieira-npm/sensation-svelte": "workspace:*",
+		"svelte": "catalog:"
+	},
+	"devDependencies": {
+		"@sveltejs/vite-plugin-svelte": "catalog:",
+		"svelte-check": "catalog:",
+		"typescript": "catalog:",
+		"vite": "catalog:"
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"name": "@morgan-vieira-npm/sensation-workspace",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "pnpm --recursive --if-present run build",
+		"check": "pnpm fmt:check && pnpm lint && pnpm check:types",
+		"check:types": "pnpm --recursive --if-present run check",
+		"dev:react": "pnpm --filter @morgan-vieira-npm/sensation-react-demo dev",
+		"dev:svelte": "pnpm --filter @morgan-vieira-npm/sensation-svelte-demo dev",
+		"fmt": "oxfmt",
+		"fmt:check": "oxfmt --check",
+		"lint": "oxlint",
+		"lint:fix": "oxlint --fix"
+	},
+	"devDependencies": {
+		"oxfmt": "catalog:",
+		"oxlint": "catalog:"
+	},
+	"engines": {
+		"node": ">=22.12.0",
+		"pnpm": ">=11.0.0"
+	},
+	"packageManager": "pnpm@11.20.0"
+}

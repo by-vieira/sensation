@@ -1,1 +1,6 @@
 .repos
+.svelte-kit
+.vite
+dist
+node_modules
+*.tsbuildinfo
