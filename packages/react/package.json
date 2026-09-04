@@ -5,7 +5,9 @@
 		"dist"
 	],
 	"type": "module",
-	"sideEffects": false,
+	"sideEffects": [
+		"**/*.css"
+	],
 	"types": "./src/index.ts",
 	"exports": {
 		".": {
@@ -23,13 +25,21 @@
 		}
 	},
 	"scripts": {
-		"build": "tsc --project tsconfig.build.json",
-		"check": "tsc --project tsconfig.json"
+		"build": "tsc --project tsconfig.build.json && node scripts/copy-styles.mjs",
+		"check": "tsc --project tsconfig.json",
+		"test": "vitest run"
+	},
+	"dependencies": {
+		"@morgan-vieira-npm/sensation-theme": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"jsdom": "catalog:",
 		"react": "catalog:",
-		"typescript": "catalog:"
+		"react-dom": "catalog:",
+		"typescript": "catalog:",
+		"vitest": "catalog:"
 	},
 	"peerDependencies": {
 		"react": ">=18.3.0 <20.0.0"

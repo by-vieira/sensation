@@ -5,18 +5,128 @@
 	font-family: system-ui, sans-serif;
 }
 
+* {
+	box-sizing: border-box;
+}
+
 body {
 	min-width: 20rem;
 	min-height: 100vh;
 	margin: 0;
+	background: #000;
+}
+
+button,
+input,
+textarea,
+select {
+	font: inherit;
 }
 
 main {
-	padding: 2rem;
+	display: grid;
+	width: min(100%, 56rem);
+	margin-inline: auto;
+	gap: 24px;
+	padding: 32px clamp(16px, 4vw, 48px) 64px;
 }
 
-h1 {
-	margin: 0;
-	font-size: 1rem;
+.fixture-header {
+	display: grid;
+	gap: 4px;
+}
+
+.fixture-block,
+.fixture-title {
+	display: block;
+}
+
+.fixture-section {
+	display: grid;
+	gap: 8px;
+}
+
+.fixture-title {
 	font-weight: 600;
+}
+
+.text-states {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 8px 20px;
+}
+
+.depth-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.depth-sample,
+.panel-sample,
+.button-fixture,
+.nested-panel {
+	padding: 12px;
+}
+
+.alignment-panel {
+	width: fit-content;
+}
+
+.alignment-sample {
+	inline-size: 12rem;
+	block-size: 48px;
+}
+
+.depth-sample {
+	min-height: 72px;
+}
+
+.panel-sample {
+	display: grid;
+	gap: 4px;
+}
+
+.nested-panel {
+	margin-block-start: 8px;
+}
+
+.button-fixture {
+	display: grid;
+	gap: 12px;
+}
+
+.button-row {
+	display: grid;
+	grid-template-columns: 6rem minmax(0, 1fr);
+	gap: 12px;
+	align-items: start;
+}
+
+.button-set {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.wide-button {
+	inline-size: 12rem;
+}
+
+.fixture-icon {
+	inline-size: 16px;
+	block-size: 16px;
+	fill: none;
+	stroke: currentColor;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 2;
+}
+
+@media (max-width: 34rem) {
+	.depth-grid,
+	.button-row {
+		grid-template-columns: 1fr;
+	}
 }

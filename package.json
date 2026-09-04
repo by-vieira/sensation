@@ -12,7 +12,8 @@
 		"fmt": "oxfmt",
 		"fmt:check": "oxfmt --check",
 		"lint": "oxlint",
-		"lint:fix": "oxlint --fix"
+		"lint:fix": "oxlint --fix",
+		"test": "pnpm --recursive --if-present run test"
 	},
 	"devDependencies": {
 		"oxfmt": "catalog:",

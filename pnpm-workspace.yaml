@@ -12,6 +12,7 @@ catalog:
   "@types/react": 19.2.18
   "@types/react-dom": 19.2.5
   "@vitejs/plugin-react": 6.1.1
+  jsdom: 30.0.1
   oxfmt: 0.66.0
   oxlint: 1.81.0
   react: 19.2.8
@@ -20,3 +21,4 @@ catalog:
   svelte-check: 4.7.6
   typescript: 6.0.3
   vite: 8.2.2
+  vitest: 4.1.1

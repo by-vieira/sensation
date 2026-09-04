@@ -78,6 +78,14 @@ We need to use the same words when we discuss the library:
 - Do not claim pixel parity. Font rendering, layout, input, and accessibility differ on the web.
 - Do not copy removed or unlicensed assets. A behavior reference is not an asset licence.
 
+## Port the complete component
+
+- Before implementation, inventory every consumer-visible feature in the matching reference and its direct dependencies. Include props, states, outputs, composition, effects, and transitions.
+- Implement every item that has a useful web equivalent. Use native HTML, CSS, framework composition, and browser APIs instead of copying Roblox mechanisms.
+- When the browser already provides a feature, preserve and test the native behavior. Do not add a Roblox-shaped compatibility prop.
+- List each omitted or approximated item in the handoff. Give a specific reason, such as Roblox-only behavior, an unavailable asset, a native browser replacement, or work outside the approved scope.
+- Do not call a component equivalent or complete until the inventory has no unexplained gaps.
+
 ## Hit every state
 
 The most common component bug is a state that looked fine in one demo and failed everywhere else. Before calling UI work done, walk this list and say which entries applied:

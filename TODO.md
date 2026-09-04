@@ -8,8 +8,9 @@ Work from top to bottom. Complete each component in both frameworks before addin
 
 - [x] Scaffold the pnpm workspace, React and Svelte packages, theme package, and demo apps.
 - [x] Add formatting, linting, type checking, production builds, and workbench testing workflows.
-- [ ] Export a public API from any package. All three package entry points are empty.
-- [ ] Add component tests, package documentation, and continuous integration.
+- [x] Export a public API from the theme, React, and Svelte packages.
+- [x] Add component tests and package documentation.
+- [ ] Add continuous integration.
 
 `pnpm check` and `pnpm build` pass on 2026-09-03.
 
@@ -17,17 +18,17 @@ Work from top to bottom. Complete each component in both frameworks before addin
 
 Build the theme, `Text`, `Panel`, and `Button` as one complete vertical slice across React and Svelte. The theme comes first because every component depends on its color and depth relationships, while the three components are enough to prove that the shared model works without committing to a large API. Finish the slice with state fixtures and focused tests so the next components can reuse a tested pattern instead of extending the scaffold on assumptions.
 
-- [ ] Define the framework-independent theme model in `packages/theme`.
-  - [ ] Generate semantic colors from base lightness, accent hue, and z-depth.
-  - [ ] Clamp z-depth and expose tokens for backgrounds, foregrounds, accents, greys, focus, and reduced motion.
-  - [ ] Test palette boundaries and rendered contrast after gamut mapping.
-- [ ] Add a theme provider and nested z-depth context to `packages/react` and `packages/svelte`.
-- [ ] Build `Text`, `Panel`, and `Button` in React and Svelte.
-  - [ ] Start `Button` with the native `<button>` element and preserve refs, attributes, events, and form behavior.
-  - [ ] Cover rest, hover, active, `focus-visible`, disabled, selected, and loading states.
-  - [ ] Use shared depth and effect tokens. Do not add component-local colors or shadows.
-- [ ] Turn both demo apps into state fixtures for the first three components.
-- [ ] Add focused tests for the theme and the public behavior of each component.
+- [x] Define the framework-independent theme model in `packages/theme`.
+  - [x] Generate semantic colors from base lightness, accent hue, and z-depth.
+  - [x] Clamp z-depth and expose tokens for backgrounds, foregrounds, accents, greys, focus, and reduced motion.
+  - [x] Test palette boundaries and rendered contrast after gamut mapping.
+- [x] Add a theme provider and nested z-depth context to `packages/react` and `packages/svelte`.
+- [x] Build `Text`, `Panel`, and `Button` in React and Svelte.
+  - [x] Start `Button` with the native `<button>` element and preserve refs, attributes, events, and form behavior.
+  - [x] Cover rest, hover, active, `focus-visible`, disabled, selected, and loading states.
+  - [x] Use shared depth and effect tokens. Do not add component-local colors or shadows.
+- [x] Turn both demo apps into state fixtures for the first three components.
+- [x] Add focused tests for the theme and the public behavior of each component.
 
 ## Next: complete the foundation set
 

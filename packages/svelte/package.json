@@ -28,13 +28,20 @@
 	},
 	"scripts": {
 		"build": "svelte-package",
-		"check": "tsc --project tsconfig.json"
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"test": "vitest run"
+	},
+	"dependencies": {
+		"@morgan-vieira-npm/sensation-theme": "workspace:*"
 	},
 	"devDependencies": {
 		"@sveltejs/package": "catalog:",
+		"@sveltejs/vite-plugin-svelte": "catalog:",
+		"jsdom": "catalog:",
 		"svelte": "catalog:",
 		"svelte-check": "catalog:",
-		"typescript": "catalog:"
+		"typescript": "catalog:",
+		"vitest": "catalog:"
 	},
 	"peerDependencies": {
 		"svelte": "^5.0.0"
