@@ -9,16 +9,27 @@
 	import {
 		Button,
 		Panel,
+		Switch,
 		Text,
+		TextField,
 		ThemeDepth,
 		ThemeProvider,
 	} from "@morgan-vieira-npm/sensation-svelte";
+
+	let createRelease = $state(true);
 </script>
 
 <ThemeProvider>
 	<ThemeDepth offset={1}>
 		<Panel>
 			<Text variant="heading">Publish changes?</Text>
+			<TextField label="Package" name="package" />
+			<Switch
+				checked={createRelease}
+				label="Create release"
+				name="release"
+				onchange={(event) => (createRelease = event.currentTarget.checked)}
+			/>
 			<Button illuminated>Publish</Button>
 		</Panel>
 	</ThemeDepth>
@@ -57,7 +68,32 @@ A negative `elevation` draws the one-pixel shadow inside the panel. Zero and pos
 
 Use `aria-pressed` for a selected or toggle state. The component styles `aria-pressed="true"` with the illuminated treatment. Always set `type="button"` when a button inside a form must not submit the form.
 
-Place SVGs or other icon content beside the label inside `Button`. The button aligns composed content and adds the reference four-pixel gap. The consumer owns the icon and its animation.
+Pass a consumer-owned icon snippet through `icon`. The snippet receives an `IconRenderContext` with themed `background`, `primary`, `secondary`, and `overlay` colors plus an incrementing `animation` signal. Mark SVG parts with `data-sensation-icon-channel` to apply a channel automatically. The button advances the signal on activation and when `illuminated` turns on.
+
+## TextField
+
+`TextField` renders a native `<input>` by default. Set `multiline` to render a native `<textarea>`. Native attributes, events, form behavior, editing, selection, and autofill pass through. Bind `element` to access the input or textarea.
+
+Use `label`, `helpText`, and `error` to render text with the correct `for`, `aria-describedby`, and `aria-invalid` relationships. Use `jumbo` for the reference 32-pixel control and 16-pixel text. The default control is 24 pixels tall with 14-pixel text.
+
+`class` and `style` apply to the input or textarea. `containerClass` and `containerStyle` apply to the component root. The `icon` snippet receives the field icon theme and advances its animation signal on focus.
+
+The placeholder uses the field foreground, then fades and moves when text appears. Single-line fields fade overflowing text at each scroll edge while retaining native editing, selection, and scrolling.
+
+## Switch
+
+`Switch` contains one native checkbox. Pass the controlled `checked` value and update it in `onchange`. Native checkbox attributes, keyboard behavior, touch behavior, and form submission pass through. Bind `element` to access the checkbox.
+
+Use `label` and `description` for visible text. `class` and `style` apply to the checkbox. `containerClass` and `containerStyle` apply to the root label.
+
+The knob moves with an interruptible CSS transition. Each controlled value change adds the short reference smudge independently of press state. Reduced motion omits the smudge and snaps the transition.
+
+## Composition
+
+- `Divider` renders a themed separator. Set `orientation` to `vertical` when needed.
+- `Spacer` renders an inert square with the given CSS `size`. Prefer layout `gap` when every sibling uses the same spacing.
+- `Bullet` renders a semantic `<li>` with the reference four-pixel mark. Place it inside a `<ul>` or `<ol>`.
+- `Expander` renders a native `<details>` and `<summary>`. Native `open` and `ontoggle` behavior pass through. Its closed height is 32 pixels, and supporting browsers transition the native details content height. The contents use a theme depth one level above the parent. Its optional `icon` snippet receives the accent icon theme and a signal that advances on toggle.
 
 ## Reference boundaries
 
@@ -66,3 +102,7 @@ The browser measures and wraps text. Bind `element` and use `ResizeObserver` whe
 The button surface uses the reference speed-50 hover and press springs, 66 ms pointer sample window, one-frame prediction, and release or cancel lifecycle. Reduced motion snaps each spring to its goal.
 
 The hover surface uses the original sheen image as an alpha mask, so theme colors can tint it with the same light-or-dark relationship as the Roblox decal. Roblox layout properties and `IconPlayer` are not part of the web API.
+
+`TextField` uses native input scrolling instead of the Roblox text scroller. Focus the bound element instead of using `OnManualFocus`. `Expander` uses native disclosure layout and CSS intrinsic-size interpolation instead of requiring `InnerSize` measurements.
+
+The package does not include RbxVanilla icons or `IconPlayer`. Consumers provide icon content and decide how to respond to the animation signal.

@@ -48,6 +48,8 @@ Channel both "measure twice, cut once" and YAGNI. Keep the result ambitious and 
 
 The rest of this document contains good defaults for working in this repository. A maintainer's direction can override them.
 
+Do not use the `html-communication` skill in this repository. Work from the RbxSensation reference and maintainer direction without publishing static mocks first.
+
 ## A small glossary
 
 We need to use the same words when we discuss the library:
@@ -72,17 +74,21 @@ We need to use the same words when we discuss the library:
 ## Use the reference well
 
 - Read the matching file under `.repos/lib-studio-elttob/LibStudioElttob/RbxSensation` before building or changing a component.
+- When asked to complete a set, inspect every sibling in the matching reference directory and account for each one before deciding the set is complete.
 - Record the states and relationships that matter. Ignore implementation details that exist only because of Roblox.
 - Treat `.repos/` as read-only. Never edit it, import runtime code from it, or make the web package depend on it.
 - Keep original names when the concept survives the port. Use the browser's name when the platform concept differs.
 - Do not claim pixel parity. Font rendering, layout, input, and accessibility differ on the web.
 - Do not copy removed or unlicensed assets. A behavior reference is not an asset licence.
+- Separate restrictions from implementation choices. Restricted source or assets may not be copied, but their observable behavior can still require a clean-room web implementation. Complexity, missing tests, and planned follow-up work are not restrictions.
 
 ## Port the complete component
 
 - Before implementation, inventory every consumer-visible feature in the matching reference and its direct dependencies. Include props, states, outputs, composition, effects, and transitions.
+- Compare the finished component against that inventory again. Check exact geometry, timing, theme channels, icon animation signals, and dependency behavior rather than only the public prop surface.
 - Implement every item that has a useful web equivalent. Use native HTML, CSS, framework composition, and browser APIs instead of copying Roblox mechanisms.
 - When the browser already provides a feature, preserve and test the native behavior. Do not add a Roblox-shaped compatibility prop.
+- A browser substitution is complete only when it preserves the same consumer-visible result. Do not label a known gap an approximation unless the platform replaces that result or a maintainer accepts the difference.
 - List each omitted or approximated item in the handoff. Give a specific reason, such as Roblox-only behavior, an unavailable asset, a native browser replacement, or work outside the approved scope.
 - Do not call a component equivalent or complete until the inventory has no unexplained gaps.
 
@@ -117,8 +123,6 @@ The most common component bug is a state that looked fine in one demo and failed
 - Keep copy short. Do not add pale subtitle lines above headings as decoration.
 - Motion is interruptible. A control must respond to its current state, not finish an obsolete animation first.
 
-For a non-trivial visual, layout, or copy change, create several distinct static mocks first. Publish them with the repository's HTML communication workflow, share the URL, and wait for a maintainer to pick one before editing real components.
-
 ## Component contracts
 
 - Keep state ownership explicit. A component must not appear controlled while maintaining a second hidden truth.
@@ -144,6 +148,8 @@ For a non-trivial visual, layout, or copy change, create several distinct static
 - Use the smallest proof that the change works. Run the focused tests, lint, and typecheck commands for the files you touched.
 - Test observable behavior. Do not add a test that merely repeats the component's implementation.
 - New component behavior needs focused coverage for its state transitions and keyboard contract.
+- Passing tests prove only the behavior they assert. They do not prove reference parity or inventory completeness.
+- Add focused checks for reference-critical geometry, transition triggers, theme channels, and fallback behavior. Do not mark a checklist item complete while one of those gaps is known.
 - Visual changes need before and after images. Motion or timing changes need a short recording.
 - Check interaction in a real browser when the maintainer requests browser work. Static markup is not proof of focus, scrolling, pointer capture, or animation behavior.
 - Do not invent commands while the repository is being scaffolded. Use the scripts committed to the project, and update this section when those scripts settle.

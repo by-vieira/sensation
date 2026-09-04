@@ -27,7 +27,7 @@ export interface GesturePointerEvent {
 	readonly pointerType: string;
 }
 
-export interface ButtonGesture {
+export interface GestureSurface {
 	destroy(): void;
 	pointerCancel(event: GesturePointerEvent): void;
 	pointerDown(event: GesturePointerEvent): void;
@@ -37,6 +37,8 @@ export interface ButtonGesture {
 	pointerUp(event: GesturePointerEvent): void;
 	setEnabled(enabled: boolean): void;
 }
+
+export type ButtonGesture = GestureSurface;
 
 function advanceSpring(spring: SpringState, elapsedSeconds: number): void {
 	if (elapsedSeconds === 0 || (spring.position === spring.goal && spring.velocity === 0)) {
@@ -127,15 +129,15 @@ function averageAcceleration(samples: readonly PointerSample[]): Point {
 	return { x: x / totalWeight, y: y / totalWeight };
 }
 
-function requireSheen(button: HTMLButtonElement): HTMLElement {
-	const sheen = button.querySelector<HTMLElement>(".sensation-button__sheen");
+function requireSheen(surface: HTMLElement): HTMLElement {
+	const sheen = surface.querySelector<HTMLElement>(".sensation-gesture-sheen");
 	if (sheen === null) {
-		throw new Error("Button gesture requires a sheen element.");
+		throw new Error("Gesture surface requires a sheen element.");
 	}
 	return sheen;
 }
 
-export function createButtonGesture(button: HTMLButtonElement): ButtonGesture {
+export function createGestureSurface(button: HTMLElement): GestureSurface {
 	const view = button.ownerDocument.defaultView;
 	const sheen = requireSheen(button);
 	const hoverSpring: SpringState = { goal: 0, position: 0, velocity: 0 };
@@ -158,22 +160,22 @@ export function createButtonGesture(button: HTMLButtonElement): ButtonGesture {
 	}
 
 	function renderPointer(position: Point): void {
-		sheen.style.setProperty("--sensation-button-pointer-x", `${position.x}px`);
-		sheen.style.setProperty("--sensation-button-pointer-y", `${position.y}px`);
+		sheen.style.setProperty("--sensation-gesture-pointer-x", `${position.x}px`);
+		sheen.style.setProperty("--sensation-gesture-pointer-y", `${position.y}px`);
 	}
 
 	function renderSprings(): void {
 		const opacity = Math.max(0, (hoverSpring.position - pressSpring.position ** 2) * 0.5);
 		const scale = Math.max(0, 1 - Math.sqrt(Math.max(0, pressSpring.position)));
 
-		sheen.style.setProperty("--sensation-button-sheen-opacity", String(opacity));
-		sheen.style.setProperty("--sensation-button-sheen-scale", String(scale));
+		sheen.style.setProperty("--sensation-gesture-sheen-opacity", String(opacity));
+		sheen.style.setProperty("--sensation-gesture-sheen-scale", String(scale));
 	}
 
 	function refreshBounds(): DOMRect {
 		bounds = button.getBoundingClientRect();
 		const longestSide = Math.max(bounds.width, bounds.height);
-		sheen.style.setProperty("--sensation-button-sheen-size", `${longestSide * 4}px`);
+		sheen.style.setProperty("--sensation-gesture-sheen-size", `${longestSide * 4}px`);
 		return bounds;
 	}
 
@@ -447,4 +449,8 @@ export function createButtonGesture(button: HTMLButtonElement): ButtonGesture {
 			setSpringGoal(hoverSpring, hovering && enabled ? 1 : 0, time);
 		},
 	};
+}
+
+export function createButtonGesture(button: HTMLButtonElement): ButtonGesture {
+	return createGestureSurface(button);
 }

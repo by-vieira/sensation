@@ -4,6 +4,7 @@ import {
 	MIN_Z_DEPTH,
 	clampZDepth,
 	contrastRatio,
+	createIconTheme,
 	createPalette,
 	createThemeContext,
 	toSrgb,
@@ -18,6 +19,7 @@ describe("createPalette", () => {
 		expect(palette.bg.has(MIN_Z_DEPTH)).toBe(true);
 		expect(palette.bg.has(MAX_Z_DEPTH)).toBe(true);
 		expect(palette.accentAtopBg.size).toBe(palette.bg.size);
+		expect(palette.errorAtopBg.size).toBe(palette.bg.size);
 		expect(palette.pureAtopGreyAtopBg.size).toBe(palette.bg.size);
 	});
 
@@ -27,6 +29,7 @@ describe("createPalette", () => {
 			...palette.bg.values(),
 			...palette.fgAtopBg.values(),
 			...palette.accentAtopBg.values(),
+			...palette.errorAtopBg.values(),
 			...palette.greyAtopBg.values(),
 		];
 
@@ -38,6 +41,15 @@ describe("createPalette", () => {
 			expect(rendered.green).toBeLessThanOrEqual(1);
 			expect(rendered.blue).toBeGreaterThanOrEqual(0);
 			expect(rendered.blue).toBeLessThanOrEqual(1);
+		}
+	});
+
+	it("keeps error text readable across the working depth range", () => {
+		const palette = createPalette(0.3, 255);
+
+		for (let zDepth = -2; zDepth <= 2; zDepth += 1) {
+			const theme = createThemeContext(palette, zDepth);
+			expect(contrastRatio(theme.errorAtopBg, theme.bg)).toBeGreaterThanOrEqual(4.5);
 		}
 	});
 
@@ -56,6 +68,28 @@ describe("createPalette", () => {
 
 		expect(normalized.bg).toBe(equivalent.bg);
 		expect(normalized.accentAtopBg).toBe(equivalent.accentAtopBg);
+	});
+});
+
+describe("createIconTheme", () => {
+	it("maps mono, duo, and trio channels without icon assets", () => {
+		const theme = createThemeContext(createPalette(), 0);
+		const mono = createIconTheme(theme, {
+			background: "bg",
+			foreground: "fg",
+			style: "mono",
+		});
+		const trio = createIconTheme(theme, {
+			background: "bg",
+			foreground: "accent",
+			style: "trio",
+		});
+
+		expect(mono.secondary).toBe(mono.primary);
+		expect(mono.overlay).toBe(mono.primary);
+		expect(trio.primary).toBe(theme.accentAtopBg);
+		expect(trio.secondary).toContain("color-mix(in oklch");
+		expect(trio.overlay).toBe(theme.fgAtopBg);
 	});
 });
 

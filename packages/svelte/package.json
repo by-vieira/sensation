@@ -5,7 +5,11 @@
 		"dist"
 	],
 	"type": "module",
-	"sideEffects": false,
+	"sideEffects": [
+		"./src/lib/index.ts",
+		"./dist/index.js",
+		"**/*.css"
+	],
 	"types": "./src/lib/index.ts",
 	"svelte": "./src/lib/index.ts",
 	"exports": {

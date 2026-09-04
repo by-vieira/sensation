@@ -4,8 +4,29 @@ export const MAX_Z_DEPTH = 10;
 const HIGH_CONTRAST_DISTANCE = 0.7;
 const FOREGROUND_SWITCH_POINT = 0.65;
 const GAMUT_EPSILON = 0.000_001;
+const ERROR_HUE = 25;
 
 export type ThemeColor = `oklch(${string})`;
+export type IconThemeColor = ThemeColor | `color-mix(${string})`;
+
+export interface IconTheme {
+	readonly background: ThemeColor;
+	readonly primary: ThemeColor;
+	readonly secondary: IconThemeColor;
+	readonly overlay: ThemeColor;
+}
+
+export interface IconThemeOptions {
+	readonly background: "bg" | "accentAtopBg";
+	readonly foreground: "fg" | "accent" | "grey";
+	readonly style: "trio" | "duo" | "mono";
+}
+
+export interface IconRenderContext {
+	readonly animation: number;
+	readonly colors: IconTheme;
+	readonly theme: ThemeContext;
+}
 
 export interface SrgbColor {
 	readonly red: number;
@@ -17,6 +38,7 @@ export interface ThemePalette {
 	readonly bg: ReadonlyMap<number, ThemeColor>;
 	readonly fgAtopBg: ReadonlyMap<number, ThemeColor>;
 	readonly accentAtopBg: ReadonlyMap<number, ThemeColor>;
+	readonly errorAtopBg: ReadonlyMap<number, ThemeColor>;
 	readonly greyAtopBg: ReadonlyMap<number, ThemeColor>;
 	readonly fgAtopAccentAtopBg: ReadonlyMap<number, ThemeColor>;
 	readonly accentAtopAccentAtopBg: ReadonlyMap<number, ThemeColor>;
@@ -32,8 +54,12 @@ export interface ThemeEffects {
 	readonly panelRadius: string;
 	readonly controlRadius: string;
 	readonly shadow: string;
+	readonly shadowThickness: string;
 	readonly bevelHighlight: string;
 	readonly bevelShadow: string;
+	readonly bevelThickness: string;
+	readonly haloThickness: string;
+	readonly haloOffset: string;
 }
 
 export interface ThemeMotion {
@@ -49,6 +75,7 @@ export interface ThemeContext {
 	readonly bg: ThemeColor;
 	readonly fgAtopBg: ThemeColor;
 	readonly accentAtopBg: ThemeColor;
+	readonly errorAtopBg: ThemeColor;
 	readonly greyAtopBg: ThemeColor;
 	readonly fgAtopAccentAtopBg: ThemeColor;
 	readonly accentAtopAccentAtopBg: ThemeColor;
@@ -73,8 +100,12 @@ export const defaultThemeEffects: ThemeEffects = Object.freeze({
 	panelRadius: "8px",
 	controlRadius: "4px",
 	shadow: "rgb(0 0 0 / 10%)",
+	shadowThickness: "1px",
 	bevelHighlight: "rgb(255 255 255 / 20%)",
 	bevelShadow: "rgb(0 0 0 / 15%)",
+	bevelThickness: "1px",
+	haloThickness: "2px",
+	haloOffset: "2px",
 });
 
 export const defaultThemeMotion: ThemeMotion = Object.freeze({
@@ -241,6 +272,7 @@ export function createPalette(baseLightness = 0.3, accentHue = 255): ThemePalett
 	const bg = new Map<number, ThemeColor>();
 	const fgAtopBg = new Map<number, ThemeColor>();
 	const accentAtopBg = new Map<number, ThemeColor>();
+	const errorAtopBg = new Map<number, ThemeColor>();
 	const greyAtopBg = new Map<number, ThemeColor>();
 	const fgAtopAccentAtopBg = new Map<number, ThemeColor>();
 	const accentAtopAccentAtopBg = new Map<number, ThemeColor>();
@@ -255,6 +287,7 @@ export function createPalette(baseLightness = 0.3, accentHue = 255): ThemePalett
 		const background = calcBackground(normalizedBaseLightness, zDepth);
 		const foreground = calcForeground(background);
 		const accent = calcAccent(background, normalizedAccentHue);
+		const error = calcAccent(background, ERROR_HUE);
 		const grey = calcGrey(background);
 		const foregroundAtopAccent = calcForeground(accent);
 		const accentAtopAccent = calcAccent(accent, normalizedAccentHue);
@@ -264,6 +297,7 @@ export function createPalette(baseLightness = 0.3, accentHue = 255): ThemePalett
 		putColor(bg, zDepth, background);
 		putColor(fgAtopBg, zDepth, foreground);
 		putColor(accentAtopBg, zDepth, accent);
+		putColor(errorAtopBg, zDepth, error);
 		putColor(greyAtopBg, zDepth, grey);
 		putColor(fgAtopAccentAtopBg, zDepth, foregroundAtopAccent);
 		putColor(accentAtopAccentAtopBg, zDepth, accentAtopAccent);
@@ -279,6 +313,7 @@ export function createPalette(baseLightness = 0.3, accentHue = 255): ThemePalett
 		bg,
 		fgAtopBg,
 		accentAtopBg,
+		errorAtopBg,
 		greyAtopBg,
 		fgAtopAccentAtopBg,
 		accentAtopAccentAtopBg,
@@ -320,6 +355,7 @@ export function createThemeContext(
 		bg: getAtDepth(palette.bg, normalizedDepth),
 		fgAtopBg: getAtDepth(palette.fgAtopBg, normalizedDepth),
 		accentAtopBg: getAtDepth(palette.accentAtopBg, normalizedDepth),
+		errorAtopBg: getAtDepth(palette.errorAtopBg, normalizedDepth),
 		greyAtopBg: getAtDepth(palette.greyAtopBg, normalizedDepth),
 		fgAtopAccentAtopBg: getAtDepth(palette.fgAtopAccentAtopBg, normalizedDepth),
 		accentAtopAccentAtopBg: getAtDepth(palette.accentAtopAccentAtopBg, normalizedDepth),
@@ -338,6 +374,36 @@ export function createThemeContext(
 export function withZOffset(theme: ThemeContext, deltaZ: number): ThemeContext {
 	requireFinite(deltaZ, "deltaZ");
 	return createThemeContext(theme.palette, theme.zDepth + deltaZ, theme.effects, theme.motion);
+}
+
+export function createIconTheme(theme: ThemeContext, options: IconThemeOptions): IconTheme {
+	const background = options.background === "bg" ? theme.bg : theme.accentAtopBg;
+	const primary =
+		options.background === "bg"
+			? options.foreground === "fg"
+				? theme.fgAtopBg
+				: options.foreground === "accent"
+					? theme.accentAtopBg
+					: theme.greyAtopBg
+			: options.foreground === "accent"
+				? theme.accentAtopAccentAtopBg
+				: theme.fgAtopAccentAtopBg;
+	const secondary =
+		options.style === "mono"
+			? primary
+			: (`color-mix(in oklch, ${background} 40%, ${primary} 60%)` as const);
+	const overlay =
+		options.style !== "trio"
+			? primary
+			: options.background === "bg"
+				? options.foreground === "accent"
+					? theme.fgAtopBg
+					: theme.accentAtopBg
+				: options.foreground === "accent"
+					? theme.fgAtopAccentAtopBg
+					: theme.accentAtopAccentAtopBg;
+
+	return Object.freeze({ background, primary, secondary, overlay });
 }
 
 export function toSrgb(color: ThemeColor): SrgbColor {

@@ -6,6 +6,8 @@
 	],
 	"type": "module",
 	"sideEffects": [
+		"./src/index.ts",
+		"./dist/index.js",
 		"**/*.css"
 	],
 	"types": "./src/index.ts",

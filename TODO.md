@@ -12,7 +12,7 @@ Work from top to bottom. Complete each component in both frameworks before addin
 - [x] Add component tests and package documentation.
 - [ ] Add continuous integration.
 
-`pnpm check` and `pnpm build` pass on 2026-09-03.
+`pnpm check` and `pnpm build` pass on 2026-09-04.
 
 ## Now: build the first usable slice
 
@@ -32,14 +32,16 @@ Build the theme, `Text`, `Panel`, and `Button` as one complete vertical slice ac
 
 ## Next: complete the foundation set
 
-- [ ] Build `TextField` on native `<input>` and `<textarea>` elements.
-  - [ ] Support labels, help text, errors, disabled and read-only states, autofill, and form submission.
-  - [ ] Test keyboard use, focus, selection, long content, and increased text size.
-- [ ] Build `Switch` on a native checkbox with a controlled value and no hidden state.
-- [ ] Build `Divider`, `Spacer`, `Bullet`, and `Expander` only where they improve composition over plain HTML and CSS.
-- [ ] Define the icon slot contract without copying assets from `.repos/`.
-- [ ] Express bevel, halo, and shadow behavior as reusable theme rules. Keep them private until a consumer needs a public effect component.
-- [ ] Add fixtures for narrow and wide layouts, right-to-left text, browser zoom, reduced motion, and alternate z-depths.
+- [x] Build `TextField` on native `<input>` and `<textarea>` elements.
+  - [x] Support labels, help text, errors, disabled and read-only states, autofill, and form submission.
+  - [x] Test keyboard use, focus, selection, long content, and increased text size.
+- [x] Build `Switch` on a native checkbox with a controlled value and no hidden state.
+- [x] Build `Divider`, `Spacer`, `Bullet`, and `Expander` only where they improve composition over plain HTML and CSS.
+- [x] Match the reference gesture surface on `TextField`, `Switch`, and `Expander`.
+- [x] Match the reference transition behavior and geometry for the switch knob, expander height, text placeholder and fades, and bullet mark.
+- [x] Define themed icon channels and interaction animation signals without copying assets from `.repos/`.
+- [x] Express bevel, animated halo, and shadow behavior as reusable theme rules. Keep them private until a consumer needs a public effect component.
+- [x] Add fixtures for narrow and wide layouts, right-to-left text, browser zoom, reduced motion, and alternate z-depths.
 
 ## Then: add compound interactions
 
@@ -67,11 +69,12 @@ Build the theme, `Text`, `Panel`, and `Button` as one complete vertical slice ac
 
 ## Do not port by default
 
-- [ ] Reassess `MouseTracker`, `MousePredictor`, `OnHover`, `OnDrag`, and `GestureSurface` only when native events cannot provide the required behavior.
+- [x] Reassess `MouseTracker`, `MousePredictor`, `OnHover`, and `GestureSurface`. Keep only the small pointer-event gesture surface required by the reference behavior.
+- [ ] Reassess `OnDrag` when a component needs drag behavior that native events cannot provide.
 - [ ] Reassess `LightweightCanvas` against normal DOM containment and compositing.
 - [ ] Replace `LoadingSpinner` with a non-continuous loading treatment. The project rules prohibit continuously repainting spinners.
 - [ ] Keep `.repos/` read-only. Use it as a behavior reference and do not copy unlicensed assets or Roblox-specific mechanisms.
 
 ## Done means
 
-A component is done when its public contract is typed and documented, both frameworks expose the same behavior where their conventions allow it, the demos show every applicable state, focused tests cover its state changes and keyboard contract, and `pnpm check` plus `pnpm build` pass.
+A component is done when its reference inventory has no unexplained gaps, its public contract is typed and documented, both frameworks expose the same behavior where their conventions allow it, the demos show every applicable state, focused tests cover its state changes, geometry, transitions, icon signals, and keyboard contract, and `pnpm check` plus `pnpm build` pass. Passing checks alone do not establish completeness.

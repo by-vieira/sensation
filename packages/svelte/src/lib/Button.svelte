@@ -1,4 +1,5 @@
 <script module lang="ts">
+	import type { IconRenderContext } from "@morgan-vieira-npm/sensation-theme";
 	import type { Snippet } from "svelte";
 	import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -7,6 +8,7 @@
 		children?: Snippet;
 		element?: HTMLButtonElement | null;
 		flat?: boolean;
+		icon?: Snippet<[IconRenderContext]>;
 		illuminated?: boolean;
 		loading?: boolean;
 		subtle?: boolean;
@@ -14,11 +16,10 @@
 </script>
 
 <script lang="ts">
-	import { withZOffset } from "@morgan-vieira-npm/sensation-theme";
-	import { onDestroy } from "svelte";
-	import { createButtonGesture } from "./button-gesture.js";
-	import type { ButtonGesture } from "./button-gesture.js";
-	import sheenImage from "./sheen.png";
+	import { createIconTheme, withZOffset } from "@morgan-vieira-npm/sensation-theme";
+	import GestureSheen from "./GestureSheen.svelte";
+	import { gestureSurface } from "./gesture-surface.js";
+	import IconSlot from "./IconSlot.svelte";
 	import { mergeStyles } from "./styles.js";
 	import { getThemeState } from "./theme-context.js";
 
@@ -30,21 +31,35 @@
 		disabled = false,
 		element = $bindable(null),
 		flat = false,
+		icon,
 		illuminated = false,
 		loading = false,
-		onpointercancel,
-		onpointerdown,
+		onclick,
 		onpointerenter,
 		onpointerleave,
-		onpointermove,
-		onpointerup,
 		style,
 		subtle = false,
 		...buttonProps
 	}: ButtonProps = $props();
-	let gesture: ButtonGesture | null = null;
+	let hovering = $state(false);
+	let iconAnimation = $state(0);
+	let previousIlluminated = false;
+	let hasTrackedIllumination = false;
 	const parent = getThemeState();
 	const raisedTheme = $derived(withZOffset(parent.current, 1));
+	const buttonTheme = $derived(flat || (subtle && !hovering) ? parent.current : raisedTheme);
+	const iconColors = $derived(
+		createIconTheme(buttonTheme, {
+			background: illuminated ? "accentAtopBg" : "bg",
+			foreground: subtle && !hovering ? "grey" : "fg",
+			style: "trio",
+		}),
+	);
+	const iconContext = $derived({
+		animation: iconAnimation,
+		colors: iconColors,
+		theme: buttonTheme,
+	});
 	const mergedStyle = $derived(
 		mergeStyles(
 			[
@@ -57,17 +72,21 @@
 				`--sensation-button-flat-accent-bg:${parent.current.accentAtopBg}`,
 				`--sensation-button-flat-accent-fg:${parent.current.fgAtopAccentAtopBg}`,
 				`--sensation-button-grey:${parent.current.greyAtopBg}`,
-				`--sensation-button-focus:${parent.current.focus}`,
-				`--sensation-button-focus-gap:${parent.current.bg}`,
-				`--sensation-button-overlay:${raisedTheme.pureAtopBg}`,
 				`--sensation-button-accent-overlay:${raisedTheme.pureAtopAccentAtopBg}`,
 				`--sensation-button-radius:${parent.current.effects.controlRadius}`,
-				`--sensation-button-bevel-highlight:${parent.current.effects.bevelHighlight}`,
-				`--sensation-button-bevel-shadow:${parent.current.effects.bevelShadow}`,
+				`--sensation-effect-bevel-highlight:${parent.current.effects.bevelHighlight}`,
+				`--sensation-effect-bevel-shadow:${parent.current.effects.bevelShadow}`,
+				`--sensation-effect-bevel-thickness:${parent.current.effects.bevelThickness}`,
+				`--sensation-effect-halo-color:${parent.current.focus}`,
+				`--sensation-effect-halo-thickness:${parent.current.effects.haloThickness}`,
+				`--sensation-effect-halo-offset:${parent.current.effects.haloOffset}`,
+				`--sensation-effect-motion:${parent.current.motion.responsiveDuration}`,
+				`--sensation-effect-motion-reduced:${parent.current.motion.reducedDuration}`,
+				`--sensation-effect-easing:${parent.current.motion.easing}`,
+				`--sensation-gesture-color:${raisedTheme.pureAtopBg}`,
 				`--sensation-button-motion:${parent.current.motion.responsiveDuration}`,
 				`--sensation-button-motion-reduced:${parent.current.motion.reducedDuration}`,
 				`--sensation-button-easing:${parent.current.motion.easing}`,
-				`--sensation-button-sheen-image:url("${sheenImage}")`,
 			].join(";"),
 			style,
 		),
@@ -77,46 +96,28 @@
 		currentTarget: EventTarget & HTMLButtonElement;
 	};
 
-	function getGesture(button: HTMLButtonElement): ButtonGesture {
-		gesture ??= createButtonGesture(button);
-		return gesture;
-	}
-
-	function handlePointerCancel(event: ButtonPointerEvent): void {
-		getGesture(event.currentTarget).pointerCancel(event);
-		onpointercancel?.(event);
-	}
-
-	function handlePointerDown(event: ButtonPointerEvent): void {
-		getGesture(event.currentTarget).pointerDown(event);
-		onpointerdown?.(event);
-	}
-
 	function handlePointerEnter(event: ButtonPointerEvent): void {
-		getGesture(event.currentTarget).pointerEnter(event);
+		if (event.pointerType !== "touch") hovering = true;
 		onpointerenter?.(event);
 	}
 
-	function handlePointerMove(event: ButtonPointerEvent): void {
-		getGesture(event.currentTarget).pointerMove(event);
-		onpointermove?.(event);
-	}
-
 	function handlePointerLeave(event: ButtonPointerEvent): void {
-		getGesture(event.currentTarget).pointerLeave(event);
+		if (event.pointerType !== "touch") hovering = false;
 		onpointerleave?.(event);
 	}
 
-	function handlePointerUp(event: ButtonPointerEvent): void {
-		getGesture(event.currentTarget).pointerUp(event);
-		onpointerup?.(event);
+	function handleClick(
+		event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement },
+	): void {
+		iconAnimation += 1;
+		onclick?.(event);
 	}
 
 	$effect(() => {
-		gesture?.setEnabled(!(disabled || loading));
+		if (hasTrackedIllumination && illuminated && !previousIlluminated) iconAnimation += 1;
+		previousIlluminated = illuminated;
+		hasTrackedIllumination = true;
 	});
-
-	onDestroy(() => gesture?.destroy());
 </script>
 
 <button
@@ -125,6 +126,8 @@
 	bind:this={element}
 	class={[
 		"sensation-button",
+		"sensation-effect--bevel-raised",
+		"sensation-effect--halo",
 		`sensation-button--${align}`,
 		flat && "sensation-button--flat",
 		illuminated && "sensation-button--illuminated",
@@ -133,17 +136,18 @@
 		className,
 	]}
 	disabled={disabled || loading}
-	onpointercancel={handlePointerCancel}
-	onpointerdown={handlePointerDown}
+	onclick={handleClick}
 	onpointerenter={handlePointerEnter}
 	onpointerleave={handlePointerLeave}
-	onpointermove={handlePointerMove}
-	onpointerup={handlePointerUp}
 	style={mergedStyle}
+	use:gestureSurface={!disabled && !loading}
 >
-	<span class="sensation-button__content">{@render children?.()}</span>
+	<span class="sensation-button__content">
+		{#if icon !== undefined}<IconSlot context={iconContext} {icon} />{/if}
+		{@render children?.()}
+	</span>
 	{#if loading}<span aria-hidden="true" class="sensation-button__loading-mark">•••</span>{/if}
-	<span aria-hidden="true" class="sensation-button__sheen"></span>
+	<GestureSheen />
 </button>
 
 <style>
@@ -160,9 +164,6 @@
 		border-radius: var(--sensation-button-radius);
 		appearance: none;
 		background: var(--sensation-button-bg);
-		box-shadow:
-			inset 0 1px var(--sensation-button-bevel-highlight),
-			inset 0 -1px var(--sensation-button-bevel-shadow);
 		color: var(--sensation-button-fg);
 		cursor: pointer;
 		font-family: system-ui, sans-serif;
@@ -170,35 +171,10 @@
 		font-weight: 400;
 		line-height: 1.2;
 		text-align: center;
-		transition:
+		--sensation-effect-extra-transitions:
 			background-color var(--sensation-button-motion) var(--sensation-button-easing),
 			box-shadow var(--sensation-button-motion) var(--sensation-button-easing),
 			color var(--sensation-button-motion) var(--sensation-button-easing);
-	}
-
-	.sensation-button__sheen {
-		position: absolute;
-		top: var(--sensation-button-pointer-y, 50%);
-		left: var(--sensation-button-pointer-x, 50%);
-		width: var(--sensation-button-sheen-size, 400%);
-		height: var(--sensation-button-sheen-size, 400%);
-		border-radius: 50%;
-		background-color: var(--sensation-button-overlay);
-		-webkit-mask: var(--sensation-button-sheen-image) center / contain no-repeat;
-		mask: var(--sensation-button-sheen-image) center / contain no-repeat;
-		opacity: var(--sensation-button-sheen-opacity, 0);
-		pointer-events: none;
-		transform: translate(-50%, -50%) scale(var(--sensation-button-sheen-scale, 1));
-		transform-origin: center;
-	}
-
-	.sensation-button:focus-visible {
-		outline: 2px solid var(--sensation-button-focus);
-		outline-offset: 2px;
-		box-shadow:
-			0 0 0 1px var(--sensation-button-focus-gap),
-			inset 0 1px var(--sensation-button-bevel-highlight),
-			inset 0 -1px var(--sensation-button-bevel-shadow);
 	}
 
 	.sensation-button--start {
@@ -208,13 +184,9 @@
 
 	.sensation-button--illuminated,
 	.sensation-button[aria-pressed="true"] {
+		--sensation-gesture-color: var(--sensation-button-accent-overlay);
 		background: var(--sensation-button-accent-bg);
 		color: var(--sensation-button-accent-fg);
-	}
-
-	.sensation-button--illuminated .sensation-button__sheen,
-	.sensation-button[aria-pressed="true"] .sensation-button__sheen {
-		background-color: var(--sensation-button-accent-overlay);
 	}
 
 	.sensation-button--flat {
@@ -237,9 +209,7 @@
 
 	.sensation-button--subtle:not(.sensation-button--flat):hover {
 		background: var(--sensation-button-bg);
-		box-shadow:
-			inset 0 1px var(--sensation-button-bevel-highlight),
-			inset 0 -1px var(--sensation-button-bevel-shadow);
+		box-shadow: var(--sensation-effect-bevel-value);
 		color: var(--sensation-button-fg);
 	}
 
@@ -253,9 +223,7 @@
 	.sensation-button--subtle.sensation-button--illuminated:not(.sensation-button--flat):hover,
 	.sensation-button--subtle[aria-pressed="true"]:not(.sensation-button--flat):hover {
 		background: var(--sensation-button-accent-bg);
-		box-shadow:
-			inset 0 1px var(--sensation-button-bevel-highlight),
-			inset 0 -1px var(--sensation-button-bevel-shadow);
+		box-shadow: var(--sensation-effect-bevel-value);
 		color: var(--sensation-button-accent-fg);
 	}
 
@@ -264,7 +232,7 @@
 		opacity: 0.5;
 	}
 
-	.sensation-button:disabled .sensation-button__sheen {
+	.sensation-button:disabled :global(.sensation-gesture-sheen) {
 		display: none;
 	}
 

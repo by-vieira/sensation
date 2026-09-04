@@ -21,7 +21,8 @@ export const Panel = forwardRef<HTMLDivElement, PanelProps>(function Panel(
 	const panelStyle: SensationStyles = {
 		"--sensation-panel-bg": theme.bg,
 		"--sensation-panel-radius": theme.effects.panelRadius,
-		"--sensation-panel-shadow": theme.effects.shadow,
+		"--sensation-effect-shadow-color": theme.effects.shadow,
+		"--sensation-effect-shadow-thickness": theme.effects.shadowThickness,
 		opacity: 1 - clampTransparency(transparency),
 		...style,
 	};
@@ -32,7 +33,7 @@ export const Panel = forwardRef<HTMLDivElement, PanelProps>(function Panel(
 			ref={ref}
 			className={joinClasses(
 				"sensation-panel",
-				elevation < 0 && "sensation-panel--inset",
+				elevation < 0 ? "sensation-effect--shadow-inset" : "sensation-effect--shadow-raised",
 				className,
 			)}
 			data-sensation-depth={theme.zDepth}

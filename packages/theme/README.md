@@ -20,7 +20,7 @@ The palette contains z-depths `-10` through `10`. `createThemeContext` and `with
 
 Each `ThemeContext` exposes the RbxSensation color relationships:
 
-- `bg`, `fgAtopBg`, `accentAtopBg`, and `greyAtopBg`
+- `bg`, `fgAtopBg`, `accentAtopBg`, `errorAtopBg`, and `greyAtopBg`
 - `fgAtopAccentAtopBg`, `accentAtopAccentAtopBg`, and `greyAtopAccentAtopBg`
 - `fgAtopGreyAtopBg`
 - `pureAtopBg`, `pureAtopAccentAtopBg`, and `pureAtopGreyAtopBg`
@@ -28,7 +28,11 @@ Each `ThemeContext` exposes the RbxSensation color relationships:
 
 Colors use CSS `oklch()` syntax. Palette generation reduces chroma until each color fits the sRGB gamut. Use `toSrgb` and `contrastRatio` to inspect rendered values.
 
-`ThemeContext` also contains the shared panel, control, shadow, bevel, and motion tokens. Replace these tokens through `createThemeContext` when a consumer theme needs different effects.
+`ThemeContext` also contains shared panel, control, shadow, bevel, halo, and motion tokens. Shadow, bevel, and halo thicknesses live beside their colors, so components do not invent local effect values. Replace the complete `ThemeEffects` or `ThemeMotion` value through `createThemeContext` when a consumer theme needs different rules.
+
+`createIconTheme` derives the four RbxSensation icon channels from a theme context and a background, foreground, and style choice. React and Svelte re-export it with `IconRenderContext` for consumer-owned icons.
+
+The framework packages load the shared private effect rules from `effects.css`. Those rules own raised and inset bevels, raised and inset shadows, and the halo opacity and thickness transition. Components provide only theme values and select the applicable rule.
 
 ## Reference boundaries
 

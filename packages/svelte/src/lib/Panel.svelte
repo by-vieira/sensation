@@ -28,7 +28,7 @@
 	const opacity = $derived(1 - Math.min(Math.max(transparency, 0), 1));
 	const mergedStyle = $derived(
 		mergeStyles(
-			`--sensation-panel-bg:${theme.bg};--sensation-panel-radius:${theme.effects.panelRadius};--sensation-panel-shadow:${theme.effects.shadow};opacity:${opacity}`,
+			`--sensation-panel-bg:${theme.bg};--sensation-panel-radius:${theme.effects.panelRadius};--sensation-effect-shadow-color:${theme.effects.shadow};--sensation-effect-shadow-thickness:${theme.effects.shadowThickness};opacity:${opacity}`,
 			style,
 		),
 	);
@@ -37,7 +37,11 @@
 <div
 	{...divProps}
 	bind:this={element}
-	class={["sensation-panel", elevation < 0 && "sensation-panel--inset", className]}
+	class={[
+		"sensation-panel",
+		elevation < 0 ? "sensation-effect--shadow-inset" : "sensation-effect--shadow-raised",
+		className,
+	]}
 	data-sensation-depth={theme.zDepth}
 	style={mergedStyle}
 >
@@ -49,10 +53,5 @@
 		box-sizing: border-box;
 		border-radius: var(--sensation-panel-radius);
 		background: var(--sensation-panel-bg);
-		box-shadow: 0 0 0 1px var(--sensation-panel-shadow);
-	}
-
-	.sensation-panel--inset {
-		box-shadow: inset 0 0 0 1px var(--sensation-panel-shadow);
 	}
 </style>

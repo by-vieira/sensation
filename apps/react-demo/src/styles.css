@@ -25,15 +25,55 @@ select {
 
 main {
 	display: grid;
-	width: min(100%, 56rem);
+	width: min(100%, 64rem);
 	margin-inline: auto;
 	gap: 24px;
 	padding: 32px clamp(16px, 4vw, 48px) 64px;
 }
 
+.fixture-header,
+.fixture-section,
+.form-fixture,
+.switch-stack,
+.layout-sample {
+	display: grid;
+}
+
 .fixture-header {
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 16px;
+	align-items: center;
+}
+
+.fixture-header-copy {
 	display: grid;
 	gap: 4px;
+}
+
+.accent-picker {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	cursor: pointer;
+}
+
+.accent-picker input {
+	inline-size: 36px;
+	block-size: 28px;
+	padding: 2px;
+	border: 1px solid rgb(255 255 255 / 30%);
+	border-radius: 4px;
+	background: transparent;
+	cursor: pointer;
+}
+
+.accent-picker input:focus-visible {
+	outline: 2px solid #fff;
+	outline-offset: 2px;
+}
+
+.fixture-section {
+	gap: 8px;
 }
 
 .fixture-block,
@@ -41,19 +81,19 @@ main {
 	display: block;
 }
 
-.fixture-section {
-	display: grid;
-	gap: 8px;
-}
-
 .fixture-title {
 	font-weight: 600;
 }
 
-.text-states {
+.text-states,
+.button-set,
+.form-actions {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: baseline;
+	align-items: center;
+}
+
+.text-states {
 	gap: 8px 20px;
 }
 
@@ -64,32 +104,14 @@ main {
 }
 
 .depth-sample,
-.panel-sample,
 .button-fixture,
-.nested-panel {
+.foundation-panel,
+.layout-sample {
 	padding: 12px;
-}
-
-.alignment-panel {
-	width: fit-content;
-}
-
-.alignment-sample {
-	inline-size: 12rem;
-	block-size: 48px;
 }
 
 .depth-sample {
 	min-height: 72px;
-}
-
-.panel-sample {
-	display: grid;
-	gap: 4px;
-}
-
-.nested-panel {
-	margin-block-start: 8px;
 }
 
 .button-fixture {
@@ -104,14 +126,9 @@ main {
 	align-items: start;
 }
 
-.button-set {
-	display: flex;
-	flex-wrap: wrap;
+.button-set,
+.form-actions {
 	gap: 8px;
-}
-
-.wide-button {
-	inline-size: 12rem;
 }
 
 .fixture-icon {
@@ -121,12 +138,71 @@ main {
 	stroke: currentColor;
 	stroke-linecap: round;
 	stroke-linejoin: round;
-	stroke-width: 2;
+	stroke-width: 1.75;
 }
 
-@media (max-width: 34rem) {
+.form-fixture {
+	gap: 12px;
+}
+
+.field-pair {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.switch-stack {
+	gap: 10px;
+}
+
+.form-actions {
+	min-height: 24px;
+}
+
+.expander-content {
+	padding: 4px 8px 8px;
+}
+
+.bullet-list {
+	display: grid;
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+}
+
+.layout-fixtures {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+	align-items: start;
+}
+
+.layout-sample {
+	gap: 10px;
+	min-width: 0;
+}
+
+.narrow-sample {
+	inline-size: min(18rem, 100%);
+}
+
+.zoom-sample {
+	zoom: 1.5;
+}
+
+@media (max-width: 40rem) {
+	.fixture-header {
+		grid-template-columns: 1fr;
+	}
+
+	.accent-picker {
+		justify-self: start;
+	}
+
 	.depth-grid,
-	.button-row {
+	.button-row,
+	.field-pair,
+	.layout-fixtures {
 		grid-template-columns: 1fr;
 	}
 }

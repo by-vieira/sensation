@@ -1,0 +1,98 @@
+.sensation-effect--bevel-raised {
+	--sensation-effect-bevel-value:
+		inset 0 var(--sensation-effect-bevel-thickness, 1px)
+			var(--sensation-effect-bevel-highlight, rgb(255 255 255 / 20%)),
+		inset 0 calc(-1 * var(--sensation-effect-bevel-thickness, 1px))
+			var(--sensation-effect-bevel-shadow, rgb(0 0 0 / 15%));
+	box-shadow: var(--sensation-effect-bevel-value);
+}
+
+.sensation-effect--bevel-inset {
+	--sensation-effect-bevel-value:
+		inset 0 var(--sensation-effect-bevel-thickness, 1px)
+			var(--sensation-effect-bevel-shadow, rgb(0 0 0 / 15%)),
+		inset 0 calc(-1 * var(--sensation-effect-bevel-thickness, 1px))
+			var(--sensation-effect-bevel-highlight, rgb(255 255 255 / 20%));
+	box-shadow: var(--sensation-effect-bevel-value);
+}
+
+.sensation-effect--shadow-raised {
+	box-shadow: 0 0 0 var(--sensation-effect-shadow-thickness, 1px)
+		var(--sensation-effect-shadow-color, rgb(0 0 0 / 10%));
+}
+
+.sensation-effect--shadow-inset {
+	box-shadow: inset 0 0 0 var(--sensation-effect-shadow-thickness, 1px)
+		var(--sensation-effect-shadow-color, rgb(0 0 0 / 10%));
+}
+
+.sensation-effect--halo {
+	outline-color: transparent;
+	outline-offset: calc(var(--sensation-effect-halo-offset, 2px) - 2px);
+	outline-style: solid;
+	outline-width: calc(var(--sensation-effect-halo-thickness, 2px) + 4px);
+	transition:
+		var(--sensation-effect-extra-transitions, opacity 0s),
+		outline-color var(--sensation-effect-motion, 100ms)
+			var(--sensation-effect-easing, cubic-bezier(0.2, 0, 0, 1)),
+		outline-offset var(--sensation-effect-motion, 100ms)
+			var(--sensation-effect-easing, cubic-bezier(0.2, 0, 0, 1)),
+		outline-width var(--sensation-effect-motion, 100ms)
+			var(--sensation-effect-easing, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.sensation-effect--halo:focus-visible,
+.sensation-effect--halo:focus-within,
+.sensation-effect--halo[data-sensation-halo-visible="true"] {
+	outline-color: var(--sensation-effect-halo-color, currentColor);
+	outline-offset: var(--sensation-effect-halo-offset, 2px);
+	outline-width: var(--sensation-effect-halo-thickness, 2px);
+}
+
+.sensation-gesture-sheen {
+	position: absolute;
+	z-index: 2;
+	top: var(--sensation-gesture-pointer-y, 50%);
+	left: var(--sensation-gesture-pointer-x, 50%);
+	inline-size: var(--sensation-gesture-sheen-size, 400%);
+	block-size: var(--sensation-gesture-sheen-size, 400%);
+	border-radius: 50%;
+	background-color: var(--sensation-gesture-color, currentColor);
+	-webkit-mask: var(--sensation-gesture-image) center / contain no-repeat;
+	mask: var(--sensation-gesture-image) center / contain no-repeat;
+	opacity: var(--sensation-gesture-sheen-opacity, 0);
+	pointer-events: none;
+	transform: translate(-50%, -50%) scale(var(--sensation-gesture-sheen-scale, 1));
+	transform-origin: center;
+}
+
+.sensation-icon-slot {
+	display: inline-grid;
+	inline-size: 16px;
+	block-size: 16px;
+	flex: 0 0 16px;
+	color: var(--sensation-icon-primary, currentColor);
+	place-items: center;
+}
+
+.sensation-icon-slot [data-sensation-icon-channel="background"] {
+	color: var(--sensation-icon-background);
+}
+
+.sensation-icon-slot [data-sensation-icon-channel="primary"] {
+	color: var(--sensation-icon-primary);
+}
+
+.sensation-icon-slot [data-sensation-icon-channel="secondary"] {
+	color: var(--sensation-icon-secondary);
+}
+
+.sensation-icon-slot [data-sensation-icon-channel="overlay"] {
+	color: var(--sensation-icon-overlay);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sensation-effect--halo {
+		transition-duration: var(--sensation-effect-motion-reduced, 0ms);
+	}
+}
